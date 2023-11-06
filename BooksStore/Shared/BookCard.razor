@@ -4,7 +4,7 @@
     <p>Publishing date: @Book?.PublishingDate</p>
     @if (WithButton)
     {
-        <button style="width:100%">Add to Cart</button>
+        <button style="width:100%" @onclick="AddToCart">Add to Cart</button>
     }
 </div>
 
@@ -17,4 +17,11 @@
     public bool WithButton { get; set; } = true;
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? UserAttributes { get; set; }
+    [Parameter]
+    public EventCallback<Book?> OnAddToCartClicked { get; set; }
+
+    private void AddToCart()
+    {
+        OnAddToCartClicked.InvokeAsync(Book);
+    }
 }

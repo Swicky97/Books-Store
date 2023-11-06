@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting
 @inject IConfiguration Configuration
 @inject IWebAssemblyHostEnvironment Host
+@inject IBooksService BooksService
 
 <PageTitle>Index</PageTitle>
 
@@ -11,6 +12,22 @@ Welcome to your new app.
 
 <BookCard Book="_firstBook" />
 <BookCard Book="_firstBook" WithButton="false" class="mt-3" />
+
+<h3>Available Books:</h3>
+<div style="display:flex">
+    @foreach (var book in _books)
+    {
+        <BookCard Book="book" OnAddToCartClicked="AddToCart" />
+    }
+</div>
+
+<h3 class="mt-3">My Cart</h3>
+<ul>
+    @foreach (var item in _booksCart)
+    {
+        <li>@item.Title</li>
+    }
+</ul>
 
 <p>Api Url: @Configuration["ApiUrl"]</p>
 
@@ -27,4 +44,16 @@ Welcome to your new app.
         PublishingDate = new DateTime(2022, 08, 01),
         Title = "Mastering Blazor WebAssembly"
     };
+
+    private List<Book> _books = new List<Book>();
+    protected override async Task OnInitializedAsync()
+    {
+        _books = await BooksService.GetAllBooksAsync();
+    }
+
+    private List<Book> _booksCart = new List<Book>();
+    private void AddToCart(Book selectedBook)
+    {
+        _booksCart.Add(selectedBook);
+    }
 }
