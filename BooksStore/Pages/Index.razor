@@ -9,9 +9,22 @@
 
 Welcome to your new app.
 
+<BookCard Book="_firstBook" />
+<BookCard Book="_firstBook" WithButton="false" class="mt-3" />
+
 <p>Api Url: @Configuration["ApiUrl"]</p>
 
 @if (!Host.IsDevelopment())
 {
     <SurveyPrompt Title="How is Blazor working for you?" />
+}
+
+@code
+{
+    private Book _firstBook = new Book
+    {
+        AuthorName = "John Smith",
+        PublishingDate = new DateTime(2022, 08, 01),
+        Title = "Mastering Blazor WebAssembly"
+    };
 }
