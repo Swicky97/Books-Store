@@ -7,8 +7,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Shared\ModalPopup.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Shared\ModalPopup.razor.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.23" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.23" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Shared\ModalPopup.razor">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,7 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+@using BooksStore.Shared
+
 @inject IConfiguration Configuration
 @inject IWebAssemblyHostEnvironment Host
 @inject IBooksService BooksService
@@ -29,6 +31,15 @@ Welcome to your new app.
     }
 </ul>
 
+<ModalPopup Title="Hi!" IsOpen="@_isWelcomeModalOpen" OnCloseClicked="() => _isWelcomeModalOpen = false">
+    <ChildContent>
+        <p>Welcome to our Books Store, here you will find a huge collection of books to help you build you career in software development, enjoy it!</p>
+    </ChildContent>
+    <FooterContent>
+        <button class="btn btn-primary" @onclick="() => _isWelcomeModalOpen = false">Discover It</button>
+    </FooterContent>
+</ModalPopup>
+
 <p>Api Url: @Configuration["ApiUrl"]</p>
 
 @if (!Host.IsDevelopment())
@@ -38,6 +49,10 @@ Welcome to your new app.
 
 @code
 {
+    private bool _isWelcomeModalOpen = true;
+    private List<Book> _books = new List<Book>();
+    private List<Book> _booksCart = new List<Book>();
+
     private Book _firstBook = new Book
     {
         AuthorName = "John Smith",
@@ -45,15 +60,15 @@ Welcome to your new app.
         Title = "Mastering Blazor WebAssembly"
     };
 
-    private List<Book> _books = new List<Book>();
     protected override async Task OnInitializedAsync()
     {
         _books = await BooksService.GetAllBooksAsync();
     }
-
-    private List<Book> _booksCart = new List<Book>();
+ 
     private void AddToCart(Book selectedBook)
     {
         _booksCart.Add(selectedBook);
     }
+
+
 }
