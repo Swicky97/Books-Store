@@ -1,10 +1,13 @@
 ﻿@page "/"
+
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting
-@using BooksStore.Shared
 
 @inject IConfiguration Configuration
 @inject IWebAssemblyHostEnvironment Host
 @inject IBooksService BooksService
+@inject NavigationManager Navigation
+
+@implements IDisposable
 
 <PageTitle>Index</PageTitle>
 
@@ -62,13 +65,22 @@ Welcome to your new app.
 
     protected override async Task OnInitializedAsync()
     {
+        Navigation.LocationChanged += Navigation_LocationChanged;
         _books = await BooksService.GetAllBooksAsync();
     }
- 
+
     private void AddToCart(Book selectedBook)
     {
         _booksCart.Add(selectedBook);
     }
 
+    private void Navigation_LocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        Console.WriteLine($"The location changed to {e.Location}");
+    }
 
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= Navigation_LocationChanged;
+    }
 }

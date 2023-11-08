@@ -22,6 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BooksStore.Blazor.Components\BooksStore.Blazor.Components.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="Shared\ModalPopup.razor">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
