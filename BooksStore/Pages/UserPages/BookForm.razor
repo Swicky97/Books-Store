@@ -1,6 +1,11 @@
 ﻿@page "/book/form"
 
-@using BooksStore.Blazor.Components;
+@using BooksStore.Blazor.Components
+@using Blazored.LocalStorage
+
+@inject ILocalStorageService LocalStorage
+
+@implements IDisposable
 
 <PageTitle>BooksStore | Add a new book</PageTitle>
 <div class="row">
@@ -92,6 +97,12 @@
     private TimeOnly _time = new TimeOnly(12, 30, 0);
     private BlazorSimpleMde _simpleMde;
 
+    protected async override Task OnInitializedAsync()
+    {
+        SetupTimer();
+        await CheckSavedStateAsync();
+    }
+
     private async void HandleBookFormSubmission()
     {
         _book.Description = await _simpleMde.GetEditorValueAsync();
@@ -99,6 +110,7 @@
         Console.WriteLine($"Title {_book.Title}");
         Console.WriteLine($"Author {_book.Author}");
         Console.WriteLine($"Price ${_book.Price}");
+        await ClearSavedStateAsync();
     }
 
     private void OnFileSelected(InputFileChangeEventArgs e)
@@ -113,6 +125,49 @@
         Console.WriteLine($"File size {file.Size}");
         // Access the stream of the file
         var stream = file.OpenReadStream();
+    }
+
+    private async Task SaveFormStateAsync()
+    {
+        // Read the description from the SimpleMDE editor
+        _book.Description = await _simpleMde.GetEditorValueAsync();
+        // SaveItemAsync takes a key which is the 'book'
+        // and the value to store, it will be serialized
+        // and stored as JSON object
+        await LocalStorage.SetItemAsync("book", _book);
+    }
+
+    private async Task CheckSavedStateAsync()
+    {
+        // ContainsKeyAsync method check Whether there is a
+        // stored key in the browser's local storage
+        if (await LocalStorage.ContainKeyAsync("book"))
+        {
+            _book = await LocalStorage.GetItemAsync<SubmitBook>("book");
+        }
+    }
+
+    private async Task ClearSavedStateAsync()
+    {
+        await LocalStorage.RemoveItemAsync("book");
+    }
+
+    private System.Timers.Timer _timer = new();
+    private void SetupTimer()
+    {
+        var second = 1000;
+        _timer.Interval = 10 * second;
+        _timer.Elapsed += async (sender, e) =>
+        {
+            await SaveFormStateAsync();
+        };
+        _timer.Start();
+    }
+
+    public void Dispose()
+    {
+        _timer.Stop();
+        _timer.Dispose();
     }
 
     private BookFormat _bookFormat = BookFormat.Both;
